@@ -1,22 +1,10 @@
-f# def answer_one():
-	# 2^10
-	# 2^log n
-	# 4*n
-	# n^2 + 10*n
-	# 4*n * log n + 2*n
-	# n^3	
-	# 2^n
-	# n*log n
-	
-
-def answer_two(n):
-	print "Logarithmic - log(n)"
-
-
-
 def answer_three(filename, n_largest):
 	'''
-	filename: 
+	This function searches a given piece of text and
+	returns the letter and digram count in descending order
+
+	:filename: the filename of the text to be analyzed
+	:n_largest: the number of letters/digrams to be ranked
 	'''
 	import numpy as np
 	import string as String
@@ -64,7 +52,7 @@ def answer_three(filename, n_largest):
 	
 	for index in top_letters_indices:
 		top_letters_sorted.append([abc[index], letters[index]])
-	print top_letters_sorted
+	
 
 
 
@@ -80,17 +68,32 @@ def answer_three(filename, n_largest):
 		# sorted_letter_list.append(abc[]) #####
 		sorted_digrams.append([ abc[x[coords]] + abc[y[coords]],
 			digrams[x[coords], y[coords]] ])
+
 	
+	print '======================================'
+	print 'ANSWER THREE - LETTER AND DIGRAM COUNT'
+	print '======================================'
+	print
+	print 'Top Letters'
+	print '-----------------------------'
+	print top_letters_sorted
+	print
+	print
+	print 'Top Digrams'
+	print '-----------------------------'
 	print sorted(sorted_digrams, key=lambda x:x[1], reverse=True)
-
-
-
+	print
+	print
+	print
 
 
 
 def compare(num_list):
 	'''
+	This algorithm finds the minimum and maximum
+	values in 3n/2 operations
 
+	:num_list: a list of numbers
 	'''
 	num_len = len(num_list)
 	mid_point = num_len // 2
@@ -128,9 +131,14 @@ def compare(num_list):
 			max_num = mid_num
 
 	# Print results!
+	print '======================================'
+	print 'ANSWER FOUR - MIN/MAX VALUES'
+	print '======================================'
 	print 'Minimum value: {}'.format(min_num)
 	print 'Maximum value: {}'.format(max_num)
 
+# Get the 10 top letters/digrams for the CIA text
+answer_three('world95.txt', 10)
 
+# Get the min max values of the following values
 compare([0, 2, -5, -15, 55, 91, 101])
-answer_three('world95.txt', 26)
