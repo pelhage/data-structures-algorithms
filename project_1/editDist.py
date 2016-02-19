@@ -6,7 +6,7 @@ file_2 = open(sys.argv[2], 'r').read()
 
 
 def edit_distance(file_1, file_2):
-	'''
+	"""
 	This function calculates the edit Distance
 	of two passed in strings `file_1` and `file_2`
 
@@ -14,7 +14,7 @@ def edit_distance(file_1, file_2):
 	:file_2: Second string of text to be compared
 
 	:returns: integer of the edit distance
-	'''
+	"""
 	# Lengths of each file
 	m = len(file_1) + 1 # FILE 1
 	n = len(file_2) + 1
@@ -49,6 +49,7 @@ def edit_distance(file_1, file_2):
 	backtrack(DP, m-1, n-1)
 	return DP[n-1, m-1]
 
+
 def get_min(a, b, c):
 	return min([a, b, c])
 
@@ -58,10 +59,11 @@ str_a = ''
 str_b = ''
 str_c = ''
 
+
 # given a digit, check to see where it came from
 def backtrack(DP, x, y):
-	'''
-	'''
+	"""
+	"""
 	
 	# Ensure strings are defined as global, not local
 	global str_a, str_b, str_c
@@ -109,7 +111,7 @@ def backtrack(DP, x, y):
 
 
 def pretty_print(seq_one, seq_two, alignment, edit_distance):
-	'''
+	"""
 	Prints the edit distance, and alignment sequence
 	according to the project guidelines (60 chars)
 
@@ -117,7 +119,7 @@ def pretty_print(seq_one, seq_two, alignment, edit_distance):
 	:seq_two: string containing an aligned string of `file_2`
 	:alignment: string showing matches for `seq_one` + `seq_two`
 	:edit_distance: integer of the edit distance of the pair
-	'''
+	"""
 	import math
 	# Get the alignment length
 	align_len = len(alignment)
