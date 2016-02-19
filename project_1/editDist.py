@@ -3,9 +3,9 @@ import numpy as np
 file_1 = open(sys.argv[1], 'r').read()
 file_2 = open(sys.argv[2], 'r').read()
 
-print file_1
-print file_2
-
+str_a = ''
+str_b = ''
+str_c = ''
 def edit_distance(file_1, file_2):
 	'''
 	This function calculates the edit Distance
@@ -17,60 +17,121 @@ def edit_distance(file_1, file_2):
 	:returns: integer of the edit distance
 	'''
 	# Lengths of each file
-	m = len(file_1) + 1
+	m = len(file_1) + 1 # FILE 1
 	n = len(file_2) + 1
+
 	# Initializes 2D array
-	DP = np.zeros(shape=(m,n), dtype=np.int)
+	DP = np.zeros(shape=(n,m), dtype=np.int)
 	DP[0, 0] = 0
-	# Initialize first col of array's values
-	for i in range(1, m):
-		DP[i, 0] = i * 2
 	# Initialize first row of array's values
-	for j in range(1, n):
-		DP[0, j] = j * 1
-	
-	for i in range(1, m):
-		for j in range(1, n):
+	# representing file 1
+	for x in range(1, m):
+		DP[0, x] = x
+	# Initialize first col of array's values
+	# representing file 2
+	for y in range(1, n):
+		DP[y, 0] = y
+
+	# For each letter in file 1
+	for x in range(1, m):
+		# Go through the letters of file 2
+		for y in range(1, n):
 
 			# Go back 2 indexes due to `len` and 
-			if file_1[i-1] == file_2[j-1]:
-				DP[i, j] = DP[i-1, j-1]
+			if file_1[x-1] == file_2[y-1]:
+				DP[y, x] = DP[y-1, x-1]
 			else:
-				above = DP[i, j-1]
-				left = DP[i-1, j]
-				diag = DP[i-1, j-1]
-				DP[i, j] = get_min(above, left, diag) + 1
+				above = DP[y-1, x]
+				left = DP[y, x-1]
+				diag = DP[y-1, x-1]
+				DP[y, x] = get_min(above, left, diag) + 1
 			
 	print DP
-	backtrack(DP)
-	return DP[m-1, n-1]
+	backtrack(DP, m-1, n-1)
+	return DP[n-1, m-1]
 
-def backtrack(data):
-	m, n = data.shape
-	data[m,n]
-
+def get_min(a, b, c):
+	return min([a, b, c])
 
 
-'''
-  i   i   i   i   i   i
-	  C   A   T   T   G
-  0, -1, -2, -3, -4, -5
-A -1, -1, 0, -1, -2, -3
-T -2, -2, -1
-T -3
-G -4
-A -5
-'''
+
+
+# given a digit, check to see where it came from
+def backtrack(DP, x, y):
+
+	global str_a, str_b, str_c
+	if x < 1 or y < 1:
+		return False
+	current = DP[y, x]
+
+	
+	# Look at its neighbors
+	above = DP[y-1, x]
+	left = DP[y, x-1]
+	diag = DP[y-1, x-1]
+	
+	
+	# check for a minimum val
+	min = get_min(above, left, diag)
+	print 'Above: {}, left: {}, diag: {}, MIN: {}'.format(above, left, diag, min)
+	print 'Current: {} at {},{}'.format(current, x, y)
+	# if the minimum val is from the diagonal
+	if diag == min:
+		str_a += file_1[x-1]
+		str_b += file_2[y-1]
+		if file_1[x-1] == file_2[y-1]:
+			str_c += '|'
+		else:
+			str_c += ' '
+		next_x = x-1
+		next_y = y-1
+		print 'Moving Diagonally to {} at {},{}'.format(diag, next_x, next_y)
+	# if the minimum val is from the left, then you deleted
+	# the column value
+	elif left == min:
+		str_a += file_1[x-1]
+		str_b += '-'
+		str_c += ' '
+		next_x = x-1
+		next_y = y
+		print 'Moving Left to {} at {},{}'.format(left, next_x, next_y)
+	# otherwise
+	else:
+		str_a += '-'
+		str_b += file_2[y-1]
+		str_c += ' '
+		next_x = x
+		next_y = y-1
+		print 'Moving Up to {} at {},{}'.format(left, next_x, next_y)
+	print str_a[::-1]
+	print str_c[::-1]
+	print str_b[::-1]
+	
+
+	print DP
+	backtrack(DP, next_x, next_y)
+
+edit_distance(file_1, file_2)
 def is_match(a, b):
 	if a == b:
 		return 0
 	else:
 		return 1
 
-def get_min(a, b, c):
-	return min([a, b, c])
 
-print edit_distance(file_2, file_1)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### NOTES TAKEN TO COMPLETE THE PROJECT ###
 '''
