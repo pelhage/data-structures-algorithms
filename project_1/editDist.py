@@ -1,11 +1,10 @@
 import sys
 import numpy as np
+
 file_1 = open(sys.argv[1], 'r').read()
 file_2 = open(sys.argv[2], 'r').read()
 
-str_a = ''
-str_b = ''
-str_c = ''
+
 def edit_distance(file_1, file_2):
 	'''
 	This function calculates the edit Distance
@@ -36,8 +35,9 @@ def edit_distance(file_1, file_2):
 	for x in range(1, m):
 		# Go through the letters of file 2
 		for y in range(1, n):
-
-			# Go back 2 indexes due to `len` and 
+			# If the characters are the same,
+			# Set the value to diagonal neighbor.
+			# Otherwise, set val to min of neighbors
 			if file_1[x-1] == file_2[y-1]:
 				DP[y, x] = DP[y-1, x-1]
 			else:
@@ -45,8 +45,7 @@ def edit_distance(file_1, file_2):
 				left = DP[y, x-1]
 				diag = DP[y-1, x-1]
 				DP[y, x] = get_min(above, left, diag) + 1
-			
-	print DP
+
 	backtrack(DP, m-1, n-1)
 	return DP[n-1, m-1]
 
@@ -55,26 +54,31 @@ def get_min(a, b, c):
 
 
 
+str_a = ''
+str_b = ''
+str_c = ''
 
 # given a digit, check to see where it came from
 def backtrack(DP, x, y):
-
+	'''
+	'''
+	
+	# Ensure strings are defined as global, not local
 	global str_a, str_b, str_c
+	
+	# Break out of recursion once reach 0,0
 	if x < 1 or y < 1:
-		return False
+		pretty_print(str_a[::-1], str_c[::-1], str_b[::-1])
+		return
 	current = DP[y, x]
 
-	
 	# Look at its neighbors
 	above = DP[y-1, x]
 	left = DP[y, x-1]
 	diag = DP[y-1, x-1]
 	
-	
 	# check for a minimum val
 	min = get_min(above, left, diag)
-	print 'Above: {}, left: {}, diag: {}, MIN: {}'.format(above, left, diag, min)
-	print 'Current: {} at {},{}'.format(current, x, y)
 	# if the minimum val is from the diagonal
 	if diag == min:
 		str_a += file_1[x-1]
@@ -85,103 +89,57 @@ def backtrack(DP, x, y):
 			str_c += ' '
 		next_x = x-1
 		next_y = y-1
-		print 'Moving Diagonally to {} at {},{}'.format(diag, next_x, next_y)
-	# if the minimum val is from the left, then you deleted
-	# the column value
+	# if the val comes from the left, there is a gap
 	elif left == min:
 		str_a += file_1[x-1]
 		str_b += '-'
 		str_c += ' '
 		next_x = x-1
 		next_y = y
-		print 'Moving Left to {} at {},{}'.format(left, next_x, next_y)
-	# otherwise
+	# otherwise, if val comes from above, there is a gap
 	else:
 		str_a += '-'
 		str_b += file_2[y-1]
 		str_c += ' '
 		next_x = x
 		next_y = y-1
-		print 'Moving Up to {} at {},{}'.format(left, next_x, next_y)
-	print str_a[::-1]
-	print str_c[::-1]
-	print str_b[::-1]
-	
 
-	print DP
+	# The function calls itself to proceed
 	backtrack(DP, next_x, next_y)
 
-edit_distance(file_1, file_2)
-def is_match(a, b):
-	if a == b:
-		return 0
+
+def pretty_print(seq_one, seq_two, alignment, edit_distance):
+	'''
+	Prints the edit distance, and alignment sequence
+	according to the project guidelines (60 chars)
+
+	:seq_one: string containing an aligned string of `file_1`
+	:seq_two: string containing an aligned string of `file_2`
+	:alignment: string showing matches for `seq_one` + `seq_two`
+	:edit_distance: integer of the edit distance of the pair
+	'''
+	import math
+	# Get the alignment length
+	align_len = len(alignment)
+	print '\nEdit Distance = {}'.format(edit_distance)
+	print 'Optimal Alignment: \n'
+	# If the alignment is greater than 60 chars
+	# we have to print it in chunks	
+	if (align_len > 60):
+		# Figure out how many chunks to print
+		chunks = int(math.ceil(float(align_len) / 60))
+		for i in range(0, chunks):
+			start = i * 60
+			end = (i + 1) * 60
+			print seq_one[start:end]
+			print alignment[start:end]
+			print seq_two[start:end]
+			print
 	else:
-		return 1
+		print seq_one
+		print alignment
+		print seq_two
+		print
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### NOTES TAKEN TO COMPLETE THE PROJECT ###
-'''
-Edit Distance: the minimum number of edit operations it takes
-to convert one to another.
-	- Substitutions
-	- Indels
-
-Alignment:
-	Simplest Scoring Function:
-		Match = +1
-		Mismatch = -1
-		indel = -1
-		- This is called 'linear gap penalty'
-
-Take the following set of strings and use our
-'Simplest Scoring Function'. What would be the
-score?
-
-AATGCGA-TTTT
-G-TG--ACTTTC
-
-Matches: +6
-Mismatch: -2
-Indel: -4
-----------
-Score: 0
-
-
-How can alignment be computed?
-	- Dynamic Programming (Get this explained)
-		- Requires the subsolution
-		  of an optimal soultion to
-		  also be optimal:
-
-		  AATGCGA     Score: +4 - 3
-		  A-TG--A
-
-		  AATGCGA-TTT Score: +7 - 4
-		  A-TG--ACTTT
-
-Last Column of an Alignment:
-Align two strings S[1...i] and T[1..j]
-
-S[1... i - 1] S[i]      
-T[1... j - 1] T[j]
-
-Optimal Alignment Score = 
-		Optimal Alignment Score[S[1...i-1],T[1..j-1] ]
-				+ score between last two letters
-
-
-'''
+edit_distance(file_1, file_2)
