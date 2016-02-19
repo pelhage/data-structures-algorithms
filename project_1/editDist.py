@@ -13,9 +13,11 @@ class SequenceAlignment:
         self.seq_one_len = len(self.file_1)
         self.seq_two_len = len(self.file_2)
         # Initialize Data structure
+        self.penalty = 1
+        self.match = 0
         self.__init_data()
 
-    
+
     def __init_data(self):
         # Initialize Dynamic Programming matrix.
         # Seq one on x axis, seq two on y axis
@@ -27,26 +29,28 @@ class SequenceAlignment:
             DP[0, x] = x
         for y in range(1, self.seq_two_len + 1):
             DP[y, 0] = y
-        # For each letter in file 1
+        # Calculate scores by comparing seq1 to seq2
         for x in range(1, self.seq_one_len + 1):
-            # Go through the letters of file 2
             for y in range(1, self.seq_two_len + 1):
                 # If the chars are same, set val to 
                 # diagonal neighbor, else set to min
-                if self.file_1[x-1] == self.file_2[y-1]:
-                    DP[y, x] = DP[y-1, x-1]
-                else:
-                    DP[y, x] = min(
-                        DP[y-1, x], # above
-                        DP[y, x-1], # left
-                        DP[y-1, x-1] # diagonal
-                    ) + 1
+                DP[y, x] = min(
+                    DP[y-1, x] + self.penalty, # above
+                    DP[y, x-1] + self.penalty, # left
+                    DP[y-1, x-1] + self._match_score(y,x)) # diagonal)
         self.DP = DP
         self.edit_distance = DP[self.seq_two_len-1, 
                                 self.seq_one_len-1]
         return
 
-    
+
+    def _match_score(self, y, x):
+        if self.file_1[x-1] == self.file_2[y - 1]:
+            return 0
+        else:
+            return 1
+
+
     def print_data(self):
         print self.DP
 
@@ -128,8 +132,11 @@ class SequenceAlignment:
             print seq_match
             print seq_two
         print
-    
+
+
     def local_alignment(self):
+        alignment_score_1 = []
+        alignment_score_2 = []
         DP = self.DP[1:, 1:]
         indices = np.where(DP == DP.argmax())
         x_y_coords = zip(indices[0], indices[1])
