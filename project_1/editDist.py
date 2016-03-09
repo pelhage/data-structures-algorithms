@@ -145,5 +145,5 @@ class SequenceAlignment:
 
 edit_distance = SequenceAlignment(file_1, file_2)
 edit_distance.backtrace()
-edit_distance.print_data()
+# edit_distance.print_data()
 edit_distance.local_alignment()

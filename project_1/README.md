@@ -1,4 +1,9 @@
+## Run Program
+
+Simply type `python editDist.py <file1.txt> <file2.txt>` to run the program
+
 ## My Output
+
 
 ```
 Edit Distance = 34
